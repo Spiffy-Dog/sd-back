@@ -30,6 +30,14 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+  dogName: {
+    type: String,
+    default: null,
+  },
+  dogBreed: {
+    type: String,
+    default: null,
+  },
   token: {
     type: String,
     default: null,

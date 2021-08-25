@@ -34,29 +34,27 @@ const userRegistrationValidation = (req, res, next) => {
   checkValidation(schema, req, res, next);
 };
 
-// const userInfoValidation = (req, res, next) => {
-//   const schema = Joi.object({
-//     height: Joi.string().min(2).max(3).required(),
-//     weight: Joi.string().min(2).max(3).required(),
-//     age: Joi.string().min(2).max(3).required(),
-//     desiredWeight: Joi.string().min(2).max(3).required(),
-//     bloodGroup: Joi.string().min(1).max(1).required(),
-//     productsNotAllowed: Joi.array(),
-//   });
-//   checkValidation(schema, req, res, next);
-// };
+const userInfoValidation = (req, res, next) => {
+  const schema = Joi.object({
+    surname: Joi.string().min(3).max(16).required(),
+    number: Joi.string().min(10).max(13).required(),
+    deliveryAdress: Joi.string().min(15).max(50).required(),
+    dogName: Joi.string().min(2).max(15).required(),
+    dogBreed: Joi.string().min(3).max(30).required(),
+  });
+  checkValidation(schema, req, res, next);
+};
 
-// const addUserInfoValidation = (req, res, next) => {
-//   const schema = Joi.object({
-//     height: Joi.string().min(2).max(3).required(),
-//     weight: Joi.string().min(2).max(3).required(),
-//     age: Joi.string().min(2).max(3).required(),
-//     desiredWeight: Joi.string().min(2).max(3).required(),
-//     bloodGroup: Joi.string().min(1).max(1).required(),
-//     productsNotAllowed: Joi.array().required(),
-//   });
-//   checkValidation(schema, req, res, next);
-// };
+const addUserInfoValidation = (req, res, next) => {
+  const schema = Joi.object({
+    surname: Joi.string().min(3).max(16).required(),
+    number: Joi.string().min(10).max(13).required(),
+    deliveryAdress: Joi.string().min(15).max(50).required(),
+    dogName: Joi.string().min(2).max(15).required(),
+    dogBreed: Joi.string().min(3).max(30).required(),
+  });
+  checkValidation(schema, req, res, next);
+};
 
 const userLoginValidation = (req, res, next) => {
   const schema = Joi.object({
@@ -70,6 +68,7 @@ const userLoginValidation = (req, res, next) => {
 
 module.exports = {
   userRegistrationValidation,
-  //   userInfoValidation,
+  userInfoValidation,
+  addUserInfoValidation,
   userLoginValidation,
 };

@@ -33,14 +33,14 @@ class RegistrationConflictError extends ClientError {
   }
 }
 
-class NotVarifiedError extends ClientError {
+class NotVerifiedError extends ClientError {
   constructor(message) {
     super(message);
     this.status = 404;
   }
 }
 
-class AlreadyVarifiedError extends ClientError {
+class AlreadyVerifiedError extends ClientError {
   constructor(message) {
     super(message);
     this.status = 400;
@@ -60,7 +60,7 @@ module.exports = {
   WrongParametersError,
   NotAuthorizedError,
   RegistrationConflictError,
-  NotVarifiedError,
-  AlreadyVarifiedError,
+  NotVerifiedError,
+  AlreadyVerifiedError,
   QueryError,
 };

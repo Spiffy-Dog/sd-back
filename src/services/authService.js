@@ -1,7 +1,7 @@
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = reqiure("uuid");
-const { sendEmail } = require("./emailService");
+const { v4: uuidv4 } = require("uuid");
+
+const { sendMail } = require("./emailService");
 const { User } = require("../db/userModel");
 const {
   NotAuthorizedError,
@@ -27,22 +27,37 @@ const logIn = async ({ email, password }) => {
   return { token, email };
 };
 
-const registration = async ({ name, email, password }) => {
+const registration = async (body) => {
+  const verifyToken = uuidv4();
+  const { email } = body;
   const existEmail = await User.findOne({ email });
 
   if (existEmail) {
     throw new RegistrationConflictError("Email is already used");
   }
-  const user = new User({
-    name,
-    email,
-    password,
-  });
-  await user.save();
+  const newUser = new User({ ...body, verifyToken });
+  await newUser.save();
 
-  await sendEmail(name, email);
+  await sendMail(verifyToken, email);
 
-  return logIn({ name, email, password });
+  return newUser;
+  //   return logIn({ name, email, password });
+};
+
+const verification = async (token) => {
+  const user = await User.findOne({ verifyToken: token });
+
+  if (user) {
+    await user.updateOne({ verify: true, verifyToken: null });
+    return true;
+  }
+};
+
+const reVerification = async (email) => {
+  const user = await User.findOne({ email, verify: false });
+  if (user) {
+    await sendMail(user.verifyToken, email);
+  }
 };
 
 const logOut = async (userId) => {
@@ -70,30 +85,28 @@ const checkCurrentUser = async (token) => {
 };
 
 const getUserInfo = async (userId) => {
-  const { height, weight, age, desiredWeight, bloodGroup, productsNotAllowed } =
+  const { number, surName, deliveryAdress, dogName, dogBreed } =
     await User.findById(userId);
-  return { height, weight, age, desiredWeight, bloodGroup, productsNotAllowed };
+  return { number, surName, deliveryAdress, dogName, dogBreed };
 };
 
 const addUserInfo = async ({
   userId,
-  height,
-  weight,
-  desiredWeight,
-  bloodGroup,
-  age,
-  productsNotAllowed,
+  number,
+  surName,
+  deliveryAdress,
+  dogName,
+  dogBreed,
 }) => {
   await User.findOneAndUpdate(
     { _id: userId },
     {
       $set: {
-        height,
-        weight,
-        desiredWeight,
-        bloodGroup,
-        age,
-        productsNotAllowed,
+        number,
+        surName,
+        deliveryAdress,
+        dogName,
+        dogBreed,
       },
     }
   );
@@ -103,6 +116,8 @@ module.exports = {
   registration,
   logIn,
   logOut,
+  verification,
+  reVerification,
   checkCurrentUser,
   getUserInfo,
   addUserInfo,
